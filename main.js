@@ -47,6 +47,12 @@ function handleToggleBtn(id){
     document.getElementById(id).classList.remove("border-gray-300");
     document.getElementById(id).classList.add("border-[#0874f2]","bg-[#0874f20d]");
 }
+
+
+
+
+
+
 // add money feature
 document.getElementById("add-money-btn").addEventListener("click", function(e){
     e.preventDefault();
@@ -123,6 +129,76 @@ document.getElementById("withdraw-btn").addEventListener("click", function(e){
     console.log(transactionData);
 });
 
+// Transfer Money feature
+document.getElementById("transfer-btn").addEventListener("click", function(e){
+    e.preventDefault();
+
+    const accountNumber = document.getElementById("transfer-account-number").value;
+    const amount = getInputValueNumber("transfer-amount");
+    const pin = parseInt(document.getElementById("transfer-pin").value);
+    const availableBalance = getInnerText("available-balance");
+
+    // validation
+    if(accountNumber.length < 11){
+        alert("Please enter a valid account number");
+        return;
+    }
+    if(isNaN(amount) || amount <= 0){
+        alert("Please enter a valid amount");
+        return;
+    }
+    if(amount > availableBalance){
+        alert("Insufficient balance");
+        return;
+    }
+    if(pin !== validPin){
+        alert("Invalid pin!");
+        return;
+    }
+
+    // balance update
+    const totalNewAvailableBalance = availableBalance - amount;
+    setInnerText("available-balance", totalNewAvailableBalance);
+
+    alert("Successfully transferred " + amount + " Tk to account: " + accountNumber);
+});
+
+// Get Bonus feature
+// get bonus feature
+document.getElementById("bonus-btn").addEventListener("click", function(e){
+    e.preventDefault();
+
+    const coupon = document.getElementById("bonus-coupon").value.trim();
+    const availableBalance = getInnerText("available-balance");
+
+    if(coupon === "PAYOO2023"){
+        const bonusAmount = 100; // Fixed bonus amount
+        const totalNewAvailableBalance = availableBalance + bonusAmount;
+        
+        // balance update
+        setInnerText("available-balance", totalNewAvailableBalance);
+
+        alert("🎉 Congratulations! You've received a bonus of " + bonusAmount + " Tk.");
+
+        // store transaction data
+        const data = {
+            name: "Get Bonus",
+            amount: bonusAmount,
+            date: new Date().toLocaleDateString()  
+        }
+        transactionData.push(data);
+
+        console.log("Transaction Data:", transactionData);
+
+    } else {
+        alert("❌ Invalid coupon code. Please try again.");
+    }
+});
+
+
+
+
+// Transactions feature
 document.getElementById("transaction-btn").addEventListener("click", function(){
     const transactionContainer = document.getElementById("transaction-container")
     transactionContainer.innerText = ""
